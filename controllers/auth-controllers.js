@@ -19,14 +19,14 @@ const createSendToken = (user, statusCode, res) => {
 const register = async (req, res, next) => {
     const { username, email, password, passwordConfirm } = req.body;
     const user = await User.create({ username, email, password, passwordConfirm });
-    res.status(201).json({ status: "success", data: { user } })
+    createSendToken(user, 201, res);
 };
 
 const login = async (req, res, next) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email }).select("+password");
     if (!user || !await user.correctPassword(password, user.password)) return;
-    res.status(200).json({ status: "success", data: { user } });
+    createSendToken(user, 200, res);
 };
 
 module.exports = {
