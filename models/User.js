@@ -10,7 +10,6 @@ const userSchema = new mongoose.Schema({
         required: [true, "Please tell us your email!"],
         unique: true,
         lowercase: true,
-        validate: [validator.isEmail, "Email is of an incorrect format!"],
     },
     role: {
         type: String,
