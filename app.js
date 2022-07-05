@@ -5,6 +5,12 @@ const mongoose = require("mongoose");
 const express = require("express");
 const app = express();
 
+const userRouter = require("./routes/user-routes");
+
+app.use(express.json());
+
+app.use("/api/v1/users", userRouter);
+
 const DB = process.env.MONGO_URI.replace("<PASSWORD>", process.env.MONGO_PASSWORD);
 
 mongoose.connect(DB)
