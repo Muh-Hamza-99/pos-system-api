@@ -7,9 +7,13 @@ const app = express();
 
 const userRouter = require("./routes/user-routes");
 
+const globalErrorHandler = require("./middleware/error-handler");
+
 app.use(express.json());
 
 app.use("/api/v1/users", userRouter);
+
+app.use(globalErrorHandler);
 
 const DB = process.env.MONGO_URI.replace("<PASSWORD>", process.env.MONGO_PASSWORD);
 
