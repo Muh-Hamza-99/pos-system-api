@@ -1,4 +1,4 @@
-const AppError = require("./app-error");
+const AppError = require("../utilities/app-error");
 
 const sendErrorDevelopment = (error, res) => {
     res.status(error.statusCode).json({
