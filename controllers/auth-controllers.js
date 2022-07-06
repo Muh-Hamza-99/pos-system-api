@@ -2,6 +2,8 @@ const JWT = require("jsonwebtoken");
 
 const User = require("../models/User");
 
+const AppError = require("../utilities/app-error");
+
 const signToken = id => JWT.sign({ id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TOKEN_EXPIRES_IN });
 
 const createSendToken = (user, statusCode, res) => {
@@ -24,8 +26,9 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
     const { email, password } = req.body;
+    if (!email || !password) return next(new AppError("Please provide an email and password!", 400));
     const user = await User.findOne({ email }).select("+password");
-    if (!user || !await user.correctPassword(password, user.password)) return;
+    if (!user || !await user.correctPassword(password, user.password)) return next(new AppError("Incorrect email/password!", 401));
     createSendToken(user, 200, res);
 };
 
