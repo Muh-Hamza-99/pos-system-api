@@ -5,6 +5,7 @@ const JWT = require("jsonwebtoken");
 const User = require("./../models/User");
 
 const AppError = require("../utilities/app-error");
+const catchAsync = require("../utilities/catch-async");
 
 const protect = catchAsync(async (req, res, next) => {
     let token;
