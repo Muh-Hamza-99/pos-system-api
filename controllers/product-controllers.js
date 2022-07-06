@@ -32,3 +32,11 @@ const deleteProduct = async (req, res, next) => {
     if (!product) return next(new AppError("No product with the provided ID!", 404));
     res.status(204).json({ status: "success", data: null });
 };
+
+module.exports = {
+    getAllProducts,
+    getOneProduct,
+    createProduct,
+    updateProduct,
+    deleteProduct,
+};
