@@ -26,6 +26,10 @@ const orderSchema = new mongoose.Schema({
     },
 });
 
+orderSchema.methods.productAlreadyInOrder = function(productID) {
+    return this.products.some(obj => obj.product.toString() === productID);
+};
+
 const Order = mongoose.model("Order", orderSchema);
 
 module.exports = Order;
