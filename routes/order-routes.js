@@ -15,6 +15,7 @@ router
     .post(createOrder);
 
 router
+    .route("/:id")
     .get(getOneOrder)
     .patch(updateOrder)
     .delete(deleteOrder);
