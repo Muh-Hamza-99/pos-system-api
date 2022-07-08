@@ -10,7 +10,7 @@ const getAllOrders = catchAsync(async (req, res, next) => {
 
 const getOneOrder = catchAsync(async (req, res, next) => {
     const { id } = req.params;
-    const order = await Order.findById(id)
+    const order = await Order.findById(id).populate("products");
     if (!order) return next(new AppError("No order with the provided ID!", 404));
     res.status(200).json({ status: "success", data: { order }});
 });
