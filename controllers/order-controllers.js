@@ -9,8 +9,8 @@ const getAllOrders = catchAsync(async (req, res, next) => {
 });
 
 const getOneOrder = catchAsync(async (req, res, next) => {
-    const { id } = req.params;
-    const order = await Order.findById(id).populate("products");
+    const { orderID } = req.params;
+    const order = await Order.findById(orderID).populate("products");
     if (!order) return next(new AppError("No order with the provided ID!", 404));
     res.status(200).json({ status: "success", data: { order }});
 });
@@ -21,8 +21,8 @@ const createOrder = catchAsync(async (req, res, next) => {
 });
 
 const updateOrder = catchAsync(async (req, res, next) => {
-    const { id } = req.params;
-    const order = await Order.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
+    const { productID, orderID } = req.params;
+    const order = await Order.findByIdAndUpdate(orderID, { $push: { "products": { product: productID } } }, { new: true, runValidators: true });
     if (!order) return next(new AppError("No order with the provided ID!", 404));
     res.status(200).json({ status: "success", data: { order } });
 });
