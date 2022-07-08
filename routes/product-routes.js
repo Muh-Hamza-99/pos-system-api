@@ -9,6 +9,10 @@ const {
     deleteProduct,
 } = require("../controllers/product-controllers");
 
+const orderRouter = require("./order-routes");
+
+router.use("/:productID/orders", orderRouter);
+
 router
     .route("/")
     .get(getAllProducts)
