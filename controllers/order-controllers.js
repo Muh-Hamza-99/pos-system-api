@@ -24,7 +24,6 @@ const updateOrder = catchAsync(async (req, res, next) => {
     const { productID, orderID } = req.params;
     let order = await Order.findById(orderID);
     if (!order) return next(new AppError("No order with the provided ID!", 404));
-    console.log(order.productAlreadyInOrder(productID))
     if (order.productAlreadyInOrder(productID)) return next(new AppError("Order already contains that product!", 406));
     order = await Order.findByIdAndUpdate(orderID, { $push: { "products": { product: productID } } }, { new: true, runValidators: true });
     res.status(200).json({ status: "success", data: { order } });
