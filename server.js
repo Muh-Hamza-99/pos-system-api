@@ -18,7 +18,7 @@ const startServer = async () => {
     } catch (error) { console.log(`Something went wrong...${error}`) };
 };
 
-const server = await startServer();
+const server = startServer();
 
 process.on("unhandledRejection", err => {
     console.log(`Unhandled Rejection! ${err.name}, ${err.message}.`);
