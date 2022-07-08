@@ -21,17 +21,18 @@ const createOrder = catchAsync(async (req, res, next) => {
 });
 
 const updateOrder = catchAsync(async (req, res, next) => {
+    const { quantity } = req.params;
     const { productID, orderID } = req.params;
     let order = await Order.findById(orderID);
     if (!order) return next(new AppError("No order with the provided ID!", 404));
     if (order.productAlreadyInOrder(productID)) return next(new AppError("Order already contains that product!", 406));
-    order = await Order.findByIdAndUpdate(orderID, { $push: { "products": { product: productID } } }, { new: true, runValidators: true });
+    order = await Order.findByIdAndUpdate(orderID, { $push: { "products": { product: productID } }, quantity }, { new: true, runValidators: true });
     res.status(200).json({ status: "success", data: { order } });
 });
 
 const deleteOrder = catchAsync(async (req, res, next) => {
-    const { id } = req.params;
-    const order = await Order.findByIdAndDelete(id); 
+    const { orderID } = req.params;
+    const order = await Order.findByIdAndDelete(orderID); 
     if (!order) return next(new AppError("No order with the provided ID!", 404));
     res.status(204).json({ status: "success", data: null });
 });
