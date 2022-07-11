@@ -53,6 +53,11 @@ userSchema.pre("save", function(next) {
     next();
 });
 
+userSchema.pre("save", function(next) {
+    if (this.username.startsWith("SUPPLIER-")) this.role = "supplier";
+    next();
+});
+
 userSchema.methods.correctPassword = async function(providedPassword, userPassword) {
     return await bcrypt.compare(providedPassword, userPassword);
 };
