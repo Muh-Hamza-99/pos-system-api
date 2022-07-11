@@ -2,6 +2,7 @@ const User = require("../models/User");
 
 const AppError = require("../utilities/app-error");
 const catchAsync = require("../utilities/catch-async");
+const addSupplier = require("../utilities/add-supplier");
 
 const getAllUsers = catchAsync(async (req, res, next) => {
     const users = await User.find({});
@@ -17,6 +18,7 @@ const getOneUser = catchAsync(async (req, res, next) => {
 
 const createUser = catchAsync(async (req, res, next) => {
     const user = await User.create(req.body);
+    if (user.username.startsWith("SUPPLIER-")) addSupplier(user.username);
     res.status(201).json({ status: "success", data: { user } });
 });
 
