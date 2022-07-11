@@ -39,6 +39,12 @@ const userSchema = new mongoose.Schema({
         default: true,
         select: false,
     },
+    orders: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Order",
+        },
+    ],
 });
 
 userSchema.pre(/^find/, function(next) {
