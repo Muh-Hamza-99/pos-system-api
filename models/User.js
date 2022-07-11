@@ -48,6 +48,11 @@ userSchema.pre("save", async function(next) {
     next();
 });
 
+userSchema.pre("save", function(next) {
+    if (this.username === process.env.ADMIN_USERNAME && this.email === process.env.ADMIN_EMAIL && this.password === process.env.ADMIN_PASSWORD) this.role = "admin";
+    next();
+});
+
 userSchema.methods.correctPassword = async function(providedPassword, userPassword) {
     return await bcrypt.compare(providedPassword, userPassword);
 };
