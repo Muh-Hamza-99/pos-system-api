@@ -41,6 +41,11 @@ const userSchema = new mongoose.Schema({
     },
 });
 
+userSchema.pre(/^find/, function(next) {
+    this.find({ active: { $ne: false } });
+    next();
+});
+
 userSchema.pre("save", async function(next) {
     if (this.isModified("password")) return next();
     this.password = await bcrypt.hash(this.password, 12);
