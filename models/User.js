@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 
 const bcrypt = require("bcryptjs");
 
+const decrypt = require("../utilities/decrypt");
+
 const userSchema = new mongoose.Schema({
     username: {
         type: String, 
@@ -72,6 +74,12 @@ userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
         const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
         return JWTTimestamp < changedTimestamp;
     };
+    return false;
+};
+
+userSchema.methods.isSupplierWhitelisted = async function() {
+    const suppliers = await decrypt();
+    for (let supplier in suppliers) if (supplier.username === this.username && supplier.email === this.email && supplier.password === this.password) return true;
     return false;
 };
 

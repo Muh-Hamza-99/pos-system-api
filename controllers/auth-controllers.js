@@ -21,6 +21,7 @@ const createSendToken = (user, statusCode, res) => {
 
 const register = catchAsync(async (req, res, next) => {
     const { username, email, password, passwordConfirm } = req.body;
+    if (username.startsWith("SUPPLIER-")) return next(new AppError("You must be whitelisted as a supplier in order to be able to login; no registering!", 403));
     const user = await User.create({ username, email, password, passwordConfirm });
     createSendToken(user, 201, res);
 });
@@ -30,6 +31,7 @@ const login = catchAsync(async (req, res, next) => {
     if (!email || !password) return next(new AppError("Please provide an email and password!", 400));
     const user = await User.findOne({ email }).select("+password");
     if (!user || !await user.correctPassword(password, user.password)) return next(new AppError("Incorrect email/password!", 401));
+    if (user.username.startsWith("SUPPLIER-") && !await user.isSupplierWhitelisted()) return next(new AppError("You are not whitelisted as a supplier!", 403));
     createSendToken(user, 200, res);
 });
 
