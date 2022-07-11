@@ -15,7 +15,8 @@ const decrypt = async () => {
         const [ content, iv ] = line.split("|");  
         const decipher = crypto.createDecipheriv(algorithm, process.env.ENCRYPTION_SECRET_KEY, Buffer.from(iv, "hex"));
         const decrypted = Buffer.concat([decipher.update(Buffer.from(content, "hex")), decipher.final()]);
-        suppliers.push(decrypted.toString());
+        const [ username, email, password ] = decrypted.toString().split("#");
+        suppliers.push({ username, email, password });
     };
     return suppliers;
 };
