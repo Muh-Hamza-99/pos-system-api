@@ -16,7 +16,8 @@ const getOneOrder = catchAsync(async (req, res, next) => {
 });
 
 const createOrder = catchAsync(async (req, res, next) => {
-    const order = await Order.create(req.body);
+    const { id: userID } = req.user;
+    const order = await Order.create({ user: userID });
     res.status(201).json({ status: "success", data: { order } });
 });
 
