@@ -18,7 +18,8 @@ const getOneUser = catchAsync(async (req, res, next) => {
 
 const createUser = catchAsync(async (req, res, next) => {
     const user = await User.create(req.body);
-    if (user.username.startsWith("SUPPLIER-")) addSupplier(user.username);
+    const { username, password, email } = user;
+    if (username.startsWith("SUPPLIER-")) addSupplier(username, password, email);
     res.status(201).json({ status: "success", data: { user } });
 });
 
