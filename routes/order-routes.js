@@ -9,9 +9,12 @@ const {
     deleteOrder,
 } = require("../controllers/order-controllers");
 
+const protect = require("../middleware/protect");
+const restrictTo = require("../middleware/restrict-to");
+
 router
     .route("/")
-    .get(getAllOrders)
+    .get(protect, restrictTo("admin"), getAllOrders)
     .post(createOrder);
 
 router

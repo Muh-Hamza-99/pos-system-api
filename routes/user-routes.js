@@ -14,8 +14,13 @@ const {
     deleteUser,
 } = require("../controllers/user-controllers");
 
+const protect = require("../middleware/protect");
+const restrictTo = require("../middleware/restrict-to");
+
 router.post("/register", register);
 router.post("/login", login);
+
+router.use(protect, restrictTo("admin"));
 
 router
     .route("/")
