@@ -28,6 +28,13 @@ const orderSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
     },
+}, {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+});
+
+orderSchema.virtual("totalPrice").get(function() {
+    return this.products.reduce((firstProduct, secondProduct) => { return (firstProduct.product.price * firstProduct.quantity) + (secondProduct.product.price * secondProduct.quantity) }, 0)
 });
 
 orderSchema.methods.productAlreadyInOrder = function(productID) {
