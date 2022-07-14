@@ -14,7 +14,7 @@ const {
 const protect = require("../middleware/protect");
 const restrictTo = require("../middleware/restrict-to");
 
-router.get(protect, "/checkout-session/:orderID", getCheckoutSession);
+router.get("/checkout-session/:orderID", protect, getCheckoutSession);
 
 router
     .route("/")

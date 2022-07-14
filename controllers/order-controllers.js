@@ -25,7 +25,7 @@ const getCheckoutSession = catchAsync(async (req, res, next) => {
     res.status(200).json({ status: "success", data: { session } });
 });
 
-const webhookCheckout = (req, res, next) => {
+const webhookCheckout = async (req, res, next) => {
     const signature = req.headers["stripe-signature"];
     let event;
     try { event = stripe.webhooks.constructEvent(req.body, signature, process.env.STRIPE_WEBHOOK_SECRET);
