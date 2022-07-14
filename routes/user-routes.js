@@ -7,6 +7,7 @@ const {
     logout,
     forgotPassword,
     resetPassword,
+    updatePassword,
 } = require("../controllers/auth-controllers");
 
 const {
@@ -31,6 +32,8 @@ router.patch("/resetPassword/:token", resetPassword);
 router.use(protect);
 
 router.get("/me", getMe, getOneUser);
+router.patch("/updateMyPassword", updatePassword);
+router.delete("deleteMe", getMe, deleteUser);
 
 router.use(restrictTo("admin"));
 
