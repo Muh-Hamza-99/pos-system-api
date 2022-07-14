@@ -14,11 +14,13 @@ const {
 const protect = require("../middleware/protect");
 const restrictTo = require("../middleware/restrict-to");
 
+router.use(protect);
+
 router.get("/checkout-session/:orderID", protect, getCheckoutSession);
 
 router
     .route("/")
-    .get(protect, restrictTo("admin"), getAllOrders)
+    .get(restrictTo("admin"), getAllOrders)
     .post(createOrder);
 
 router
