@@ -3,6 +3,7 @@ const Product = require("../models/Product");
 const AppError = require("../utilities/app-error");
 const APIFeatures = require("../utilities/api-features");
 const catchAsync = require("../utilities/catch-async");
+const isOwner = require("../utilities/is-owner");
 
 const getAllProducts = catchAsync(async (req, res, next) => {
     const features = new APIFeatures(Product.find({}), req.query)
@@ -29,6 +30,7 @@ const createProduct = catchAsync(async (req, res, next) => {
 
 const updateProduct = catchAsync(async (req, res, next) => {
     const { id } = req.params;
+    if (!isOwner(req.user.id, id, "Product")) return next(new AppError("You are not the owner of this product!", 403));
     const product = await Product.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
     if (!product) return next(new AppError("No product with the provided ID!", 404));
     res.status(200).json({ status: "success", data: { product } });
@@ -36,6 +38,7 @@ const updateProduct = catchAsync(async (req, res, next) => {
 
 const deleteProduct = catchAsync(async (req, res, next) => {
     const { id } = req.params;
+    if (!isOwner(req.user.id, id, "Product")) return next(new AppError("You are not the owner of this product!", 403));
     const product = await Product.findByIdAndDelete(id); 
     if (!product) return next(new AppError("No product with the provided ID!", 404));
     res.status(204).json({ status: "success", data: null });
