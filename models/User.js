@@ -41,6 +41,9 @@ const userSchema = new mongoose.Schema({
         default: true,
         select: false,
     },
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
 });
 
 userSchema.pre(/^find/, function(next) {
