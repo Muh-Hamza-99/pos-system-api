@@ -6,6 +6,7 @@ const {
     login,
     logout,
     forgotPassword,
+    resetPassword,
 } = require("../controllers/auth-controllers");
 
 const {
@@ -25,6 +26,7 @@ router.post("/login", login);
 router.get("/logout", logout);
 
 router.post("/forgotPassword", forgotPassword);
+router.patch("/resetPassword/:token", resetPassword);
 
 router.use(protect);
 
