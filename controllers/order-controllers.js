@@ -6,6 +6,7 @@ const AppError = require("../utilities/app-error");
 const APIFeatures = require("../utilities/api-features");
 const catchAsync = require("../utilities/catch-async");
 const isOwner = require("../utilities/is-owner");
+const saveToGoogleSheets = require("../utilities/google-sheets");
 
 const getCheckoutSession = catchAsync(async (req, res, next) => {
     const { orderID } = req.params;
@@ -29,7 +30,10 @@ const webhookCheckout = (req, res, next) => {
     let event;
     try { event = stripe.webhooks.constructEvent(req.body, signature, process.env.STRIPE_WEBHOOK_SECRET);
     } catch (error) { return res.status(400).send(`Webhook error: ${error.message}!`); };
-    if (event.type === "checkout.session.completed") createBookingCheckout(event.data.object);
+    if (event.type === "checkout.session.completed") {
+        await Order.findByIdAndUpdate(event.data.object.client_reference_id, { isPaid: true });
+        await saveToGoogleSheets();
+    };
 };
 
 const getAllOrders = catchAsync(async (req, res, next) => {
