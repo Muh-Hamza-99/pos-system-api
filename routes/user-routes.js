@@ -4,6 +4,7 @@ const router = express.Router();
 const {
     register, 
     login,
+    logout,
 } = require("../controllers/auth-controllers");
 
 const {
@@ -20,6 +21,7 @@ const getMe = require("../middleware/get-me");
 
 router.post("/register", register);
 router.post("/login", login);
+router.get("/logout", logout);
 
 router.use(protect);
 
