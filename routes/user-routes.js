@@ -16,11 +16,16 @@ const {
 
 const protect = require("../middleware/protect");
 const restrictTo = require("../middleware/restrict-to");
+const getMe = require("../middleware/get-me");
 
 router.post("/register", register);
 router.post("/login", login);
 
-router.use(protect, restrictTo("admin"));
+router.use(protect);
+
+router.get("/me", getMe, getOneUser);
+
+router.use(restrictTo("admin"));
 
 router
     .route("/")
