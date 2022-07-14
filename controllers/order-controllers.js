@@ -27,7 +27,7 @@ const createOrder = catchAsync(async (req, res, next) => {
     res.status(201).json({ status: "success", data: { order } });
 });
 
-const updateOrder = catchAsync(async (req, res, next) => {
+const updateOrderByProduct = catchAsync(async (req, res, next) => {
     const { method } = req.query;
     if (method !== "add" && method !== "remove") return next(new AppError("Missing/Invalid query parameter; it can only be 'add' or 'remove'!", 400));
     const { quantity } = req.body;
@@ -37,6 +37,17 @@ const updateOrder = catchAsync(async (req, res, next) => {
     const productAlreadyInOrder = order.productAlreadyInOrder(productID);
     if (method === "add" && !productAlreadyInOrder) order = await Order.findByIdAndUpdate(orderID, { $push: { "products": { product: productID, quantity } } }, { new: true, runValidators: true });
     if (method === "remove" && productAlreadyInOrder) order = await Order.findByIdAndUpdate(orderID, { $pull: { "products": { product: productID } } }, { new: true, runValidators: true });
+    res.status(200).json({ status: "success", data: { order } });
+});
+
+const updateOrderByQuantity = catchAsync(async (req, res, next) => {
+    const { quantity } = req.body;
+    const { productID, orderID } = req.params;
+    let order = await Order.findById(orderID);
+    if (!order) return next(new AppError("No order with the provided ID!", 404));
+    const productAlreadyInOrder = order.productAlreadyInOrder(productID);
+    if (!productAlreadyInOrder) return next(new AppError("You can't update a product's quantity if it is not in the order!", 400));
+    order = await Order.findByIdAndUpdate(orderID, { products: { $elemMatch: { product: productID, quantity } } });
     res.status(200).json({ status: "success", data: { order } });
 });
 
@@ -51,6 +62,7 @@ module.exports = {
     getAllOrders,
     getOneOrder,
     createOrder,
-    updateOrder,
+    updateOrderByProduct,
+    updateOrderByQuantity,
     deleteOrder,
 };
