@@ -27,6 +27,10 @@ const productSchema = new mongoose.Schema({
             message: "The number provided for initial stock is not a whole number!",
         },
     },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    },
 });
 
 const Product = mongoose.model("Product", productSchema);
