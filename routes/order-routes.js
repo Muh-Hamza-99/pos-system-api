@@ -5,7 +5,8 @@ const {
     getAllOrders,
     getOneOrder,
     createOrder,
-    updateOrder,
+    updateOrderByProduct,
+    updateOrderByQuantity,
     deleteOrder,
 } = require("../controllers/order-controllers");
 
@@ -20,7 +21,9 @@ router
 router
     .route("/:orderID")
     .get(getOneOrder)
-    .patch(updateOrder)
     .delete(deleteOrder);
+
+router.patch("/:orderID/product", updateOrderByProduct);
+router.patch("/:orderID/quantity", updateOrderByQuantity);
 
 module.exports = router;
