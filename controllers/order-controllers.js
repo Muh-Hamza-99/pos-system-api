@@ -1,3 +1,5 @@
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
 const Order = require("../models/Order");
 
 const AppError = require("../utilities/app-error");
@@ -21,6 +23,14 @@ const getCheckoutSession = catchAsync(async (req, res, next) => {
     });
     res.status(200).json({ status: "success", data: { session } });
 });
+
+const webhookCheckout = (req, res, next) => {
+    const signature = req.headers["stripe-signature"];
+    let event;
+    try { event = stripe.webhooks.constructEvent(req.body, signature, process.env.STRIPE_WEBHOOK_SECRET);
+    } catch (error) { return res.status(400).send(`Webhook error: ${error.message}!`); };
+    if (event.type === "checkout.session.completed") createBookingCheckout(event.data.object);
+};
 
 const getAllOrders = catchAsync(async (req, res, next) => {
     const features = new APIFeatures(Order.find({}), req.query)
