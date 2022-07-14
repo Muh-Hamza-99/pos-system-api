@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router({ mergeParams: true });
 
 const {
+    getCheckoutSession,
     getAllOrders,
     getOneOrder,
     createOrder,
@@ -12,6 +13,8 @@ const {
 
 const protect = require("../middleware/protect");
 const restrictTo = require("../middleware/restrict-to");
+
+router.get(protect, "/checkout-session/:orderID", getCheckoutSession);
 
 router
     .route("/")
