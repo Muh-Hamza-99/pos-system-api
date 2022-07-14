@@ -1,11 +1,17 @@
 const User = require("../models/User");
 
 const AppError = require("../utilities/app-error");
+const APIFeatures = require("../utilities/api-features");
 const catchAsync = require("../utilities/catch-async");
 const addSupplier = require("../utilities/add-supplier");
 
 const getAllUsers = catchAsync(async (req, res, next) => {
-    const users = await User.find({});
+    const features = new APIFeatures(User.find({}), req.query)
+        .filter()
+        .sort()
+        .limitFields()
+        .paginate();
+    const users = await features.query;
     res.status(200).json({ status: "success", results: users.length, data: { users }});
 });
 

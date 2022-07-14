@@ -1,10 +1,16 @@
 const Product = require("../models/Product");
 
 const AppError = require("../utilities/app-error");
+const APIFeatures = require("../utilities/api-features");
 const catchAsync = require("../utilities/catch-async");
 
 const getAllProducts = catchAsync(async (req, res, next) => {
-    const products = await Product.find({});
+    const features = new APIFeatures(Product.find({}), req.query)
+        .filter()
+        .sort()
+        .limitFields()
+        .paginate();
+    const products = await features.query;
     res.status(200).json({ status: "success", results: products.length, data: { products }});
 });
 

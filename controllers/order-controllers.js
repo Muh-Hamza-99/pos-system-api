@@ -1,10 +1,16 @@
 const Order = require("../models/Order");
 
 const AppError = require("../utilities/app-error");
+const APIFeatures = require("../utilities/api-features");
 const catchAsync = require("../utilities/catch-async");
 
 const getAllOrders = catchAsync(async (req, res, next) => {
-    const orders = await Order.find({});
+    const features = new APIFeatures(Order.find({}), req.query)
+        .filter()
+        .sort()
+        .limitFields()
+        .paginate();
+    const orders = await features.query;
     res.status(200).json({ status: "success", results: orders.length, data: { orders }});
 });
 
