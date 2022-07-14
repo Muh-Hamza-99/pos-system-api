@@ -5,6 +5,23 @@ const APIFeatures = require("../utilities/api-features");
 const catchAsync = require("../utilities/catch-async");
 const isOwner = require("../utilities/is-owner");
 
+const getCheckoutSession = catchAsync(async (req, res, next) => {
+    const { orderID } = req.params;
+    const order = await Tour.findById(orderID);
+    const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        customer_email: req.user.email,
+        client_reference_id: orderID,
+        line_items: [{
+            name: "POS Order",
+            description: order.summary,
+            amount: order.totalPrice,
+            currency: "usd",
+        }],
+    });
+    res.status(200).json({ status: "success", data: { session } });
+});
+
 const getAllOrders = catchAsync(async (req, res, next) => {
     const features = new APIFeatures(Order.find({}), req.query)
         .filter()
