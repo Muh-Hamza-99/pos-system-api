@@ -1,6 +1,7 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const Order = require("../models/Order");
+const Product = require("../models/Product");
 
 const AppError = require("../utilities/app-error");
 const APIFeatures = require("../utilities/api-features");
@@ -68,8 +69,14 @@ const updateOrderByProduct = catchAsync(async (req, res, next) => {
     if (!order) return next(new AppError("No order with the provided ID!", 404));
     if (!isOwner(req.user.id, orderID, "Order")) return next(new AppError("You are not the owner of this order!", 403));
     const productAlreadyInOrder = order.productAlreadyInOrder(productID);
-    if (method === "add" && !productAlreadyInOrder) order = await Order.findByIdAndUpdate(orderID, { $push: { "products": { product: productID, quantity } } }, { new: true, runValidators: true });
-    if (method === "remove" && productAlreadyInOrder) order = await Order.findByIdAndUpdate(orderID, { $pull: { "products": { product: productID } } }, { new: true, runValidators: true });
+    if (method === "add" && !productAlreadyInOrder) {
+        order = await Order.findByIdAndUpdate(orderID, { $push: { "products": { product: productID, quantity } } }, { new: true, runValidators: true });
+        await Product.findByIdAndUpdate(productID, { $inc: { quantity: -quantity } }, { new: true, runValidators: true });
+    };
+    if (method === "remove" && productAlreadyInOrder) {
+        order = await Order.findByIdAndUpdate(orderID, { $pull: { "products": { product: productID } } }, { new: true, runValidators: true });
+        await Product.findByIdAndUpdate(productID, { $inc: { quantity } }, { new: true, runValidators: true });
+    };
     res.status(200).json({ status: "success", data: { order } });
 });
 
