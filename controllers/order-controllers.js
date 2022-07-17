@@ -84,11 +84,13 @@ const updateOrderByQuantity = catchAsync(async (req, res, next) => {
     const { quantity } = req.body;
     const { productID, orderID } = req.params;
     let order = await Order.findById(orderID);
+    const difference = order.quantity - quantity;
     if (!order) return next(new AppError("No order with the provided ID!", 404));
     if (!isOwner(req.user.id, orderID, "Order")) return next(new AppError("You are not the owner of this order!", 403));
     const productAlreadyInOrder = order.productAlreadyInOrder(productID);
     if (!productAlreadyInOrder) return next(new AppError("You can't update a product's quantity if it is not in the order!", 400));
     order = await Order.findByIdAndUpdate(orderID, { products: { $elemMatch: { product: productID, quantity } } });
+    await Product.findByIdAndUpdate(productID, { $inc: { quantityInStock: Math.sign(difference) === 1 ? -difference : difference } });
     res.status(200).json({ status: "success", data: { order } });
 });
 
