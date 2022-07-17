@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+const Product = require("../models/Product");
+
 const orderSchema = new mongoose.Schema({
     products: [
         {
@@ -39,6 +41,12 @@ orderSchema.virtual("totalPrice").get(function() {
 
 orderSchema.methods.productAlreadyInOrder = function(productID) {
     return this.products.some(obj => obj.product.toString() === productID);
+};
+
+orderSchema.methods.deleteOrder = function() {
+    this.products.forEach(async obj => {
+        await Product.findByIdAndUpdate(obj.product, { $inc: { quantityInStock: obj.quantity } });
+    });
 };
 
 const Order = mongoose.model("Order", orderSchema);
