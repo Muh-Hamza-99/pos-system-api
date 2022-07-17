@@ -90,6 +90,8 @@ const deleteOrder = catchAsync(async (req, res, next) => {
     let order = await Order.findById(orderID);
     if (!isOwner(req.user.id, orderID, "Order")) return next(new AppError("You are not the owner of this order!", 403));
     if (!order) return next(new AppError("No order with the provided ID!", 404));
+    await Order.findByIdAndDelete(orderID);
+    order.deleteOrder();
     res.status(204).json({ status: "success", data: null });
 });
 
